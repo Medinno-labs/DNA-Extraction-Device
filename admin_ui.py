@@ -1188,36 +1188,108 @@ def user_ui():
 
 
 
+# def update_ui():
+#     repo_path = "/home/sppat/shubham"
+
+#     if not os.path.exists(repo_path):
+#         fullscreen_info("Update", "Update failed.", color="#dc3545")
+#         return
+
+#     try:
+#         os.chdir(repo_path)
+#         result = subprocess.check_output(
+#             ["git", "pull"],
+#             stderr=subprocess.STDOUT,
+#             text=True
+#         )
+
+#         # Simplify git output
+#         if "Already up to date" in result or "Already up-to-date" in result:
+#             fullscreen_info("Update", "Software is already up to date.", color="#28a745")
+#         else:
+#             fullscreen_info("Update", "Software updated successfully.", color="#28a745")
+
+#     # except subprocess.CalledProcessError:
+#     #     # Do NOT show technical error
+#     #     fullscreen_info("Update", "Update failed.", color="#dc3545")  # for not showing error
+
+#     except subprocess.CalledProcessError as e:
+#     # 🔴 SHOW RAW GIT ERROR
+#         fullscreen_info(
+#             "Update Failed",
+#             e.output,
+#             color="#dc3545"
+#         )
+
+
+
 def update_ui():
     repo_path = "/home/sppat/shubham"
 
-    if not os.path.exists(repo_path):
-        fullscreen_info("Update", "Update failed.", color="#dc3545")
+    if not os.path.isdir(repo_path):
+        fullscreen_info(
+            "Update Failed",
+            "Software folder not found.",
+            color="#dc3545"
+        )
         return
 
     try:
-        os.chdir(repo_path)
-        result = subprocess.check_output(
-            ["git", "pull"],
-            stderr=subprocess.STDOUT,
-            text=True
+        result = subprocess.run(
+            [
+                "git",
+                "-C", repo_path,
+                "pull",
+                "--ff-only",
+                "origin",
+                "main"
+            ],
+            capture_output=True,
+            text=True,
+            timeout=120
         )
 
-        # Simplify git output
-        if "Already up to date" in result or "Already up-to-date" in result:
-            fullscreen_info("Update", "Software is already up to date.", color="#28a745")
+        if result.returncode != 0:
+            error_message = (
+                result.stderr.strip()
+                or result.stdout.strip()
+                or "Unable to update software."
+            )
+
+            fullscreen_info(
+                "Update Failed",
+                error_message,
+                color="#dc3545"
+            )
+            return
+
+        output = result.stdout.strip().lower()
+
+        if "already up to date" in output or "already up-to-date" in output:
+            fullscreen_info(
+                "Update",
+                "Software is already up to date.",
+                color="#28a745"
+            )
         else:
-            fullscreen_info("Update", "Software updated successfully.", color="#28a745")
+            fullscreen_info(
+                "Update",
+                "Software updated successfully. "
+                "Restart the application to apply changes.",
+                color="#28a745"
+            )
 
-    # except subprocess.CalledProcessError:
-    #     # Do NOT show technical error
-    #     fullscreen_info("Update", "Update failed.", color="#dc3545")  # for not showing error
-
-    except subprocess.CalledProcessError as e:
-    # 🔴 SHOW RAW GIT ERROR
+    except subprocess.TimeoutExpired:
         fullscreen_info(
             "Update Failed",
-            e.output,
+            "Update timed out. Check the internet connection.",
+            color="#dc3545"
+        )
+
+    except Exception:
+        fullscreen_info(
+            "Update Failed",
+            "Unable to update software. Please contact support.",
             color="#dc3545"
         )
 
