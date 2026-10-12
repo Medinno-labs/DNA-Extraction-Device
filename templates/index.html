@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stepper Motor Control</title>
+</head>
+<body>
+    <h1>Control Stepper Motor</h1>
+    <form method="POST">
+        <label>Steps:</label><br>
+        <input type="number" name="steps" value="{{ steps }}" required><br><br>
+
+        <label>Sleep Time (seconds):</label><br>
+        <input type="text" name="sleep_time" value="{{ sleep_time }}" required><br><br>
+
+        <label>Direction:</label><br>
+        <select name="direction">
+            <option value="forward" {% if direction == 'forward' %}selected{% endif %}>Forward</option>
+            <option value="backward" {% if direction == 'backward' %}selected{% endif %}>Backward</option>
+        </select><br><br>
+
+        <label>DIR Pin (BCM):</label><br>
+        <input type="number" name="dir_pin" value="{{ dir_pin }}" required><br><br>
+
+        <label>STEP Pin (BCM):</label><br>
+        <input type="number" name="step_pin" value="{{ step_pin }}" required><br><br>
+
+        <button type="submit" name="start">Start</button>
+        <button type="submit" name="stop">Stop</button>
+    </form>
+
+    {% if message %}
+        <p><strong>{{ message }}</strong></p>
+    {% endif %}
+</body>
+</html>
