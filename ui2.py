@@ -257,7 +257,7 @@ class SelectScreen(QWidget):
             logo_lbl.setObjectName("Logo")
         col.addWidget(logo_lbl, alignment=Qt.AlignHCenter)
 
-        t = QLabel("MEDINNO TECHNOLOGIES PVT. LTD.")
+        t = QLabel("test MEDINNO TECHNOLOGIES PVT. LTD.")
         t.setObjectName("Title")
         t.setAlignment(Qt.AlignCenter)
         col.addWidget(t)
